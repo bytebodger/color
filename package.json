@@ -1,0 +1,54 @@
+{
+  "name": "@toolz/color",
+  "version": "0.0.1",
+  "description": "A JavaScript library for comparing RGB colors",
+  "keywords": [
+    "color",
+    "rgb",
+    "cmyk",
+    "javascript"
+  ],
+  "homepage": "https://github.com/bytebodger/color",
+  "bugs": {
+    "email": "adam.davis@hashverify.com",
+    "url": "https://github.com/bytebodger/color/issues"
+  },
+  "main": "src/color.js",
+  "scripts": {
+    "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/color)/\" --env=jsdom"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytebodger/color.git"
+  },
+  "author": "Adam Nathaniel Davis <adam.davis@hashverify.com> (https://writing.voyage)",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.13.1",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.12.13",
+    "babel-jest": "^26.6.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-jest": "^26.6.2",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "jest-matcher-one-of": "^1.0.2",
+    "nodemon": "^2.0.4"
+  },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version",
+    "last 1 ie version"
+  ],
+  "dependencies": {
+    "@toolz/allow": "^1.1.4"
+  }
+}
