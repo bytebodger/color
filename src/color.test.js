@@ -80,3 +80,9 @@ test('close colors can be retrieved', () => {
       name: 'Golden: Cobalt Blue',
    });
 });
+
+test('image can be updated', () => {
+   expect(color.getImage()).toEqual(null);
+   color.setImage('/static/media/some.image.35b26ddf.svg');
+   expect(color.getImage()).toEqual('/static/media/some.image.35b26ddf.svg');
+});

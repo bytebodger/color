@@ -2,6 +2,8 @@ import { allow } from '@toolz/allow';
 
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
+   let image = null;
+   let lightInsensitivity = 200;
    let palette = [];
    const rgbModel = {
       blue: 0,
@@ -9,7 +11,6 @@ const Color = () => {
       name: '',
       red: 0,
    };
-   let lightInsensitivity = 200;
    
    const addColorToPalette = (color = rgbModel) => {
       allow.anInstanceOf(color, rgbModel);
@@ -90,11 +91,16 @@ const Color = () => {
       };
    };
    
+   const getImage = () => image;
+   
    const getLightInsensitivity = () => lightInsensitivity;
    
    const getPalette = () => palette;
    
-   const is = {positive: 1};
+   const is = {
+      not: {empty: 1},
+      positive: 1,
+   };
    
    const removeColorFromPalette = (color = rgbModel) => {
       allow.anInstanceOf(color, rgbModel);
@@ -108,6 +114,12 @@ const Color = () => {
       return palette;
    };
    
+   const setImage = (newImage = '') => {
+      allow.aString(newImage, is.not.empty);
+      image = newImage;
+      return image;
+   };
+   
    const setLightInsensitivity = (insensitivity = 0) => {
       allow.aNumber(insensitivity, is.positive);
       lightInsensitivity = insensitivity;
@@ -119,10 +131,12 @@ const Color = () => {
       addColorToPalette,
       getClosestColorInThePalette,
       getCoordinates,
+      getImage,
       getLightInsensitivity,
       getPalette,
       removeColorFromPalette,
       removeColorsFromPalette,
+      setImage,
       setLightInsensitivity,
    };
 };
