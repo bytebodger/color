@@ -31,7 +31,7 @@ const Color = () => {
          return false;
       }
       const referenceCoordinates = getCoordinates(referenceColor);
-      let closestColor = {};
+      let closestColor = rgbModel;
       let shortestDistance = Number.MAX_SAFE_INTEGER;
       palette.forEach(paletteColor => {
          const paletteCoordinates = getCoordinates(paletteColor);
