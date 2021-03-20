@@ -5,7 +5,7 @@
   "keywords": [
     "color",
     "rgb",
-    "cmyk",
+    "hsv",
     "javascript"
   ],
   "homepage": "https://github.com/bytebodger/color",
