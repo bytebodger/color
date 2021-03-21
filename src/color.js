@@ -209,11 +209,13 @@ const Color = () => {
    return {
       addColorsToPalette,
       addColorToPalette,
+      baseHeavyBodyAcrylicPaints,
       getClosestColorInThePalette,
       getCoordinates,
       getImage,
       getLightInsensitivity,
       getPalette,
+      halfWhiteHeavyBodyAcrylicPaints,
       heavyBodyAcrylicPaints: [...baseHeavyBodyAcrylicPaints, ...halfWhiteHeavyBodyAcrylicPaints],
       pixelate,
       removeColorFromPalette,
