@@ -163,6 +163,7 @@ const Color = () => {
       allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette);
       const context = canvas.getContext('2d');
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const stats = {};
       for (let y = 0; y < imageData.height; y += blockSize) {
          for (let x = 0; x < imageData.width; x += blockSize) {
             const remainingX = imageData.width - x;
@@ -180,10 +181,17 @@ const Color = () => {
                });
             else
                color = averageColor;
+            if (color.name) {
+               if (stats.hasOwnProperty(name))
+                  stats[name]++;
+               else
+                  stats[name] = 1;
+            }
             context.fillStyle = `rgb(${color.red}, ${color.green}, ${color.blue})`;
             context.fillRect(x, y, blockX, blockY);
          }
       }
+      return stats;
    };
    
    const removeColorFromPalette = (color = rgbModel) => {
