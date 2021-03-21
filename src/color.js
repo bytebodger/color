@@ -2,6 +2,7 @@ import { allow } from '@toolz/allow';
 
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
+   let closestColors = {};
    let image = null;
    let lightInsensitivity = 100;
    let palette = [];
@@ -53,6 +54,9 @@ const Color = () => {
          console.warn('Colors must first be added to the palette!');
          return false;
       }
+      const key = `${referenceColor.red},${referenceColor.green},${referenceColor.blue}`;
+      if (closestColors[key])
+         return closestColors[key];
       const referenceCoordinates = getCoordinates(referenceColor);
       let closestColor = {
          blue: -1,
@@ -72,6 +76,7 @@ const Color = () => {
          if (distance < shortestDistance) {
             shortestDistance = distance;
             closestColor = paletteColor;
+            closestColors[key] = paletteColor;
          }
       });
       return closestColor;
