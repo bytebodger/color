@@ -3,11 +3,6 @@ import { allow } from '@toolz/allow';
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let image = null;
-   const imageDataModel = {
-      data: null,
-      height: 0,
-      width: 0,
-   };
    let lightInsensitivity = 100;
    let palette = [];
    const rgbModel = {
@@ -29,8 +24,8 @@ const Color = () => {
       return palette;
    };
    
-   const calculateAverageColor = (imageData = imageDataModel) => {
-      allow.anInstanceOf(imageData, imageDataModel);
+   const calculateAverageColor = (imageData = {}) => {
+      allow.anObject(imageData, is.not.empty);
       const reds = [];
       const greens = [];
       const blues = [];
@@ -137,8 +132,8 @@ const Color = () => {
       return ((imageWidth * y) + x) * 4;
    };
    
-   const getPixelObjectFromImageData = (imageData = imageDataModel, x = -1, y = -1) => {
-      allow.anInstanceOf(imageData, imageDataModel).anInteger(x, is.not.negative).anInteger(y, is.not.negative);
+   const getPixelObjectFromImageData = (imageData = {}, x = -1, y = -1) => {
+      allow.anObject(imageData).anInteger(x, is.not.negative).anInteger(y, is.not.negative);
       const index = getPixelIndex(x, y, imageData.width);
       return {
          alpa: [imageData.data[index + 3], index + 3],
