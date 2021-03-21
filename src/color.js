@@ -4,7 +4,7 @@ const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let image = null;
    const imageDataModel = {
-      data: [],
+      data: {},
       height: 0,
       width: 0,
    };
@@ -29,7 +29,7 @@ const Color = () => {
       return palette;
    };
    
-   const calculateAverageColor = (imageData) => {
+   const calculateAverageColor = (imageData = imageDataModel) => {
       allow.anInstanceOf(imageData, imageDataModel);
       const reds = [];
       const greens = [];
@@ -132,13 +132,13 @@ const Color = () => {
    
    const getPalette = () => palette;
    
-   const getPixelIndex = (x, y, imageWidth) => {
+   const getPixelIndex = (x = -1, y = -1, imageWidth = -1) => {
       allow.anInteger(x, is.not.negative).anInteger(y, is.not.negative).anInteger(imageWidth, is.positive);
       return ((imageWidth * y) + x) * 4;
    };
    
-   const getPixelObjectFromImageData = (imageData, x, y) => {
-      allow.anInstanceOf(imageData, imageDataModel);
+   const getPixelObjectFromImageData = (imageData = imageDataModel, x = -1, y = -1) => {
+      allow.anInstanceOf(imageData, imageDataModel).anInteger(x, is.not.negative).anInteger(y, is.not.negative);
       const index = getPixelIndex(x, y, imageData.width);
       return {
          alpa: [imageData.data[index + 3], index + 3],
@@ -158,7 +158,7 @@ const Color = () => {
       positive: 1,
    };
    
-   const pixelate = (canvas, blockSize) => {
+   const pixelate = (canvas = {}, blockSize = 0) => {
       allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive);
       const context = canvas.getContext('2d');
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
