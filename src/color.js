@@ -182,10 +182,10 @@ const Color = () => {
             else
                color = averageColor;
             if (color.name) {
-               if (stats.hasOwnProperty(name))
-                  stats[name]++;
+               if (stats.hasOwnProperty(color.name))
+                  stats[color.name]++;
                else
-                  stats[name] = 1;
+                  stats[color.name] = 1;
             }
             context.fillStyle = `rgb(${color.red}, ${color.green}, ${color.blue})`;
             context.fillRect(x, y, blockX, blockY);
