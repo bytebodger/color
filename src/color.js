@@ -172,7 +172,7 @@ const Color = () => {
             const averageColor = calculateAverageColor(context.getImageData(x, y, blockX, blockY));
             let color = {};
             if (matchToPalette)
-               color = color.getClosestColorInThePalette({
+               color = getClosestColorInThePalette({
                   blue: averageColor.blue,
                   green: averageColor.green,
                   red: averageColor.red,
