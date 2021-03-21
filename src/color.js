@@ -4,7 +4,7 @@ const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let image = null;
    const imageDataModel = {
-      data: {},
+      data: null,
       height: 0,
       width: 0,
    };
