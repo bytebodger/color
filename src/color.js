@@ -3,7 +3,12 @@ import { allow } from '@toolz/allow';
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let image = null;
-   let lightInsensitivity = 200;
+   const imageDataModel = {
+      data: [],
+      height: 0,
+      width: 0,
+   };
+   let lightInsensitivity = 100;
    let palette = [];
    const rgbModel = {
       blue: 0,
@@ -24,6 +29,29 @@ const Color = () => {
       return palette;
    };
    
+   const calculateAverageColor = (imageData) => {
+      allow.anInstanceOf(imageData, imageDataModel);
+      const reds = [];
+      const greens = [];
+      const blues = [];
+      for (let x = 0; x < imageData.width; x++) {
+         for (let y = 0; y < imageData.height; y++) {
+            const pixel = getPixelObjectFromImageData(imageData, x, y);
+            reds.push(pixel.red[0]);
+            greens.push(pixel.green[0]);
+            blues.push(pixel.blue[0]);
+         }
+      }
+      const redSum = reds.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      const greenSum = greens.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      const blueSum = blues.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      return {
+         red: redSum / reds.length,
+         green: greenSum / greens.length,
+         blue: blueSum / blues.length,
+      };
+   };
+   
    const getClosestColorInThePalette = (referenceColor = rgbModel) => {
       allow.anInstanceOf(referenceColor, rgbModel);
       if (palette.length === 0) {
@@ -31,9 +59,16 @@ const Color = () => {
          return false;
       }
       const referenceCoordinates = getCoordinates(referenceColor);
-      let closestColor = rgbModel;
+      let closestColor = {
+         blue: -1,
+         green: -1,
+         name: '',
+         red: -1,
+      };
       let shortestDistance = Number.MAX_SAFE_INTEGER;
       palette.forEach(paletteColor => {
+         if (shortestDistance === 0)
+            return;
          const paletteCoordinates = getCoordinates(paletteColor);
          const xDifferenceSquared = Math.pow((referenceCoordinates.x - paletteCoordinates.x), 2);
          const yDifferenceSquared = Math.pow((referenceCoordinates.y - paletteCoordinates.y), 2);
@@ -97,9 +132,53 @@ const Color = () => {
    
    const getPalette = () => palette;
    
+   const getPixelIndex = (x, y, imageWidth) => {
+      allow.anInteger(x, is.not.negative).anInteger(y, is.not.negative).anInteger(imageWidth, is.positive);
+      return ((imageWidth * y) + x) * 4;
+   };
+   
+   const getPixelObjectFromImageData = (imageData, x, y) => {
+      allow.anInstanceOf(imageData, imageDataModel);
+      const index = getPixelIndex(x, y, imageData.width);
+      return {
+         alpa: [imageData.data[index + 3], index + 3],
+         blue: [imageData.data[index + 2], index + 2],
+         green: [imageData.data[index + 1], index + 1],
+         red: [imageData.data[index], index],
+         x,
+         y,
+      };
+   };
+   
    const is = {
-      not: {empty: 1},
+      not: {
+         empty: 1,
+         negative: 0,
+      },
       positive: 1,
+   };
+   
+   const pixelate = (canvas, blockSize) => {
+      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive);
+      const context = canvas.getContext('2d');
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      for (let y = 0; y < imageData.height; y += blockSize) {
+         for (let x = 0; x < imageData.width; x += blockSize) {
+            const remainingX = imageData.width - x;
+            const remainingY = imageData.height - y;
+            const blockX = remainingX > blockSize ? blockSize : remainingX;
+            const blockY = remainingY > blockSize ? blockSize : remainingY;
+            const averageColor = calculateAverageColor(context.getImageData(x, y, blockX, blockY));
+            const closestColor = color.getClosestColorInThePalette({
+               blue: averageColor.blue,
+               green: averageColor.green,
+               red: averageColor.red,
+               name: '',
+            });
+            context.fillStyle = `rgb(${closestColor.red}, ${closestColor.green}, ${closestColor.blue})`;
+            context.fillRect(x, y, blockX, blockY);
+         }
+      }
    };
    
    const removeColorFromPalette = (color = rgbModel) => {
@@ -134,6 +213,7 @@ const Color = () => {
       getImage,
       getLightInsensitivity,
       getPalette,
+      pixelate,
       removeColorFromPalette,
       removeColorsFromPalette,
       setImage,

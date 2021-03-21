@@ -5,7 +5,7 @@ export const heavyBodyAcrylicPaints = [
    {red: 225, green: 57, blue: 62, name: 'Liquitex: Cadmium Red Medium'},
    {red: 213, green: 214, blue: 207, name: 'Liquitex: Parchment'},
    {red: 2, green: 169, blue: 165, name: 'Liquitex: Bright Aqua Green'},
-   {red: 12, green: 138, blue: 195, name: 'Liquitex: Brilliant  Blue'},
+   {red: 12, green: 138, blue: 195, name: 'Liquitex: Brilliant Blue'},
    {red: 121, green: 101, blue: 191, name: 'Liquitex: Brilliant Purple'},
    {red: 194, green: 247, blue: 87, name: 'Liquitex: Brilliant Yellow Green'},
    {red: 155, green: 122, blue: 67, name: 'Liquitex: Bronze Yellow'},
@@ -200,6 +200,6 @@ export const heavyBodyAcrylicPaints = [
    {red: 200, green: 151, blue: 61, name: 'Golden: Yellow Oxide'},
    {red: 232, green: 89, blue: 28, name: 'Liquitex: Vivid Red Orange'},
    {red: 156, green: 25, blue: 42, name: 'Liquitex: Quinacridone Crimson'},
-   {red: 224, green: 42, blue: 44, name: 'Liquitex: Cadmium Red Medium'},
    {red: 253, green: 216, blue: 71, name: 'Golden: Cadmium Yellow Medium Hue'},
+   {red: 224, green: 42, blue: 44, name: 'Liquitex: Cadmium Red Medium'},
 ];
