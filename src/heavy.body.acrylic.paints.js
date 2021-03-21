@@ -1,4 +1,4 @@
-export const heavyBodyAcrylicPaints = [
+export const baseHeavyBodyAcrylicPaints = [
    {red: 79, green: 26, blue: 27, name: 'Liquitex: Alizarin Crimson Hue Permanent'},
    {red: 41, green: 36, blue: 29, name: 'Liquitex: Raw Umber'},
    {red: 253, green: 248, blue: 59, name: 'Liquitex: Yellow Light Hansa'},
@@ -202,7 +202,9 @@ export const heavyBodyAcrylicPaints = [
    {red: 156, green: 25, blue: 42, name: 'Liquitex: Quinacridone Crimson'},
    {red: 253, green: 216, blue: 71, name: 'Golden: Cadmium Yellow Medium Hue'},
    {red: 224, green: 42, blue: 44, name: 'Liquitex: Cadmium Red Medium'},
-   //
+];
+
+export const halfWhiteHeavyBodyAcrylicPaints = [
    {red: 254, green: 246, blue: 77, name: 'Liquitex: Cadmium Yellow Light (Half-White)'},
    {red: 254, green: 247, blue: 98, name: 'Liquitex: Cadmium Yellow Light Hue (Half-White)'},
    {red: 74, green: 167, blue: 232, name: 'Liquitex: Cerulean Blue Hue (Half-White)'},

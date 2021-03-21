@@ -1,4 +1,5 @@
 import { allow } from '@toolz/allow';
+import { baseHeavyBodyAcrylicPaints, halfWhiteHeavyBodyAcrylicPaints } from './heavy.body.acrylic.paints';
 
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
@@ -213,6 +214,7 @@ const Color = () => {
       getImage,
       getLightInsensitivity,
       getPalette,
+      heavyBodyAcrylicPaints: [...baseHeavyBodyAcrylicPaints, ...halfWhiteHeavyBodyAcrylicPaints],
       pixelate,
       removeColorFromPalette,
       removeColorsFromPalette,
