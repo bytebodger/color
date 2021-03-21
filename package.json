@@ -1,6 +1,6 @@
 {
   "name": "@toolz/color",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A JavaScript library for comparing RGB colors",
   "keywords": [
     "color",

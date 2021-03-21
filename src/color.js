@@ -159,8 +159,8 @@ const Color = () => {
       positive: 1,
    };
    
-   const pixelate = (canvas = {}, blockSize = 0) => {
-      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive);
+   const pixelate = (canvas = {}, blockSize = 0, matchToPalette = true) => {
+      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette);
       const context = canvas.getContext('2d');
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       for (let y = 0; y < imageData.height; y += blockSize) {
@@ -170,13 +170,17 @@ const Color = () => {
             const blockX = remainingX > blockSize ? blockSize : remainingX;
             const blockY = remainingY > blockSize ? blockSize : remainingY;
             const averageColor = calculateAverageColor(context.getImageData(x, y, blockX, blockY));
-            const closestColor = color.getClosestColorInThePalette({
-               blue: averageColor.blue,
-               green: averageColor.green,
-               red: averageColor.red,
-               name: '',
-            });
-            context.fillStyle = `rgb(${closestColor.red}, ${closestColor.green}, ${closestColor.blue})`;
+            let color = {};
+            if (matchToPalette)
+               color = color.getClosestColorInThePalette({
+                  blue: averageColor.blue,
+                  green: averageColor.green,
+                  red: averageColor.red,
+                  name: '',
+               });
+            else
+               color = averageColor;
+            context.fillStyle = `rgb(${color.red}, ${color.green}, ${color.blue})`;
             context.fillRect(x, y, blockX, blockY);
          }
       }
