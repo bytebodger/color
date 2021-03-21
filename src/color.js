@@ -83,6 +83,35 @@ const Color = () => {
       return closestColor;
    };
    
+   const getClosestRgbColorInThePalette = (referenceColor = rgbModel) => {
+      allow.anInstanceOf(referenceColor, rgbModel);
+      if (palette.length === 0) {
+         console.warn('Colors must first be added to the palette!');
+         return false;
+      }
+      const key = `${referenceColor.red},${referenceColor.green},${referenceColor.blue}`;
+      if (closestColors[key])
+         return closestColors[key];
+      let closestColor = {
+         blue: -1,
+         green: -1,
+         name: '',
+         red: -1,
+      };
+      let shortestDistance = Number.MAX_SAFE_INTEGER;
+      palette.forEach(paletteColor => {
+         if (shortestDistance === 0)
+            return;
+         const distance = Math.abs(paletteColor.red - referenceColor.red) + Math.abs(paletteColor.green - referenceColor.green) + Math.abs(paletteColor.blue - referenceColor.blue);
+         if (distance < shortestDistance) {
+            shortestDistance = distance;
+            closestColor = paletteColor;
+            closestColors[key] = paletteColor;
+         }
+      });
+      return closestColor;
+   };
+   
    const getCoordinates = (rgbObject = rgbModel) => {
       allow.anInstanceOf(rgbObject, rgbModel);
       const hsvObject = getHsvObjectFromRgbObject(rgbObject);
@@ -159,8 +188,8 @@ const Color = () => {
       positive: 1,
    };
    
-   const pixelate = (canvas = {}, blockSize = 0, matchToPalette = true) => {
-      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette);
+   const pixelate = (canvas = {}, blockSize = 0, matchToPalette = true, useHsvMatching = true) => {
+      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette).aBoolean(useHsvMatching);
       const context = canvas.getContext('2d');
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const stats = {};
@@ -172,14 +201,22 @@ const Color = () => {
             const blockY = remainingY > blockSize ? blockSize : remainingY;
             const averageColor = calculateAverageColor(context.getImageData(x, y, blockX, blockY));
             let color = {};
-            if (matchToPalette)
-               color = getClosestColorInThePalette({
-                  blue: averageColor.blue,
-                  green: averageColor.green,
-                  red: averageColor.red,
-                  name: '',
-               });
-            else
+            if (matchToPalette) {
+               if (useHsvMatching)
+                  color = getClosestColorInThePalette({
+                     blue: averageColor.blue,
+                     green: averageColor.green,
+                     red: averageColor.red,
+                     name: '',
+                  });
+               else
+                  color = getClosestRgbColorInThePalette({
+                     blue: averageColor.blue,
+                     green: averageColor.green,
+                     red: averageColor.red,
+                     name: '',
+                  });
+            } else
                color = averageColor;
             if (color.name) {
                if (stats.hasOwnProperty(color.name))
