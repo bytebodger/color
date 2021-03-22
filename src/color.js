@@ -90,7 +90,8 @@ const Color = () => {
             case algorithm.HSV_SIMPLE:
                const paletteHsv = getHsvObjectFromRgbObject(paletteColor);
                const referenceHsv = getHsvObjectFromRgbObject(referenceColor);
-               distance = Math.abs(paletteHsv.hue - referenceHsv.hue) + Math.abs(paletteHsv.saturation - referenceHsv.saturation) + Math.abs(paletteHsv.value - referenceHsv.value);
+               distance = Math.pow((paletteHsv.hue - referenceHsv.hue), 2) + Math.pow((paletteHsv.saturation - referenceHsv.saturation), 2) + Math.pow((paletteHsv.value - referenceHsv.value), 2);
+               //distance = Math.abs(paletteHsv.hue - referenceHsv.hue) + Math.abs(paletteHsv.saturation - referenceHsv.saturation) + Math.abs(paletteHsv.value - referenceHsv.value);
                break;
             case algorithm.RGB_SQUARED:
                distance = Math.pow((paletteColor.red - referenceColor.red), 2) + Math.pow((paletteColor.green - referenceColor.green), 2) + Math.pow((paletteColor.blue - referenceColor.blue), 2);
