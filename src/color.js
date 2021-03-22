@@ -4,13 +4,13 @@ import { baseHeavyBodyAcrylicPaints, halfWhiteHeavyBodyAcrylicPaints } from './h
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let closestColors = {};
-   let currentMatchType;
+   let currentAlgorithm = 0;
    let image = null;
    let lightInsensitivity = 100;
-   const matchType = {
+   const algorithm = {
       HSV_3D: 0,
-      RMS_RGB: 1,
-      SIMPLE_RGB: 2,
+      RGB_SQUARED: 1,
+      RGB_SIMPLE: 2,
    };
    let palette = [];
    const rgbModel = {
@@ -55,6 +55,8 @@ const Color = () => {
       };
    };
    
+   const getAlgorithm = () => currentAlgorithm;
+   
    const getClosestColorInThePalette = (referenceColor = rgbModel) => {
       allow.anInstanceOf(referenceColor, rgbModel);
       if (palette.length === 0) {
@@ -75,11 +77,23 @@ const Color = () => {
       palette.forEach(paletteColor => {
          if (shortestDistance === 0)
             return;
-         const paletteCoordinates = getCoordinates(paletteColor);
-         const xDifferenceSquared = Math.pow((referenceCoordinates.x - paletteCoordinates.x), 2);
-         const yDifferenceSquared = Math.pow((referenceCoordinates.y - paletteCoordinates.y), 2);
-         const zDifferenceSquared = Math.pow((referenceCoordinates.z - paletteCoordinates.z), 2);
-         const distance = Math.sqrt(xDifferenceSquared + yDifferenceSquared + zDifferenceSquared);
+         let distance;
+         switch (currentAlgorithm) {
+            case algorithm.HSV_3D:
+               const paletteCoordinates = getCoordinates(paletteColor);
+               const xDifferenceSquared = Math.pow((referenceCoordinates.x - paletteCoordinates.x), 2);
+               const yDifferenceSquared = Math.pow((referenceCoordinates.y - paletteCoordinates.y), 2);
+               const zDifferenceSquared = Math.pow((referenceCoordinates.z - paletteCoordinates.z), 2);
+               distance = Math.sqrt(xDifferenceSquared + yDifferenceSquared + zDifferenceSquared);
+               break;
+            case algorithm.RGB_SQUARED:
+               distance = Math.pow((paletteColor.red - referenceColor.red), 2) + Math.pow((paletteColor.green - referenceColor.green), 2) + Math.pow((paletteColor.blue - referenceColor.blue), 2);
+               break;
+            case algorithm.RGB_SIMPLE:
+            default:
+               distance = Math.abs(paletteColor.red - referenceColor.red) + Math.abs(paletteColor.green - referenceColor.green) + Math.abs(paletteColor.blue - referenceColor.blue);
+               break;
+         }
          if (distance < shortestDistance) {
             shortestDistance = distance;
             closestColor = paletteColor;
@@ -88,36 +102,7 @@ const Color = () => {
       });
       return closestColor;
    };
-   
-   const getClosestRgbColorInThePalette = (referenceColor = rgbModel) => {
-      allow.anInstanceOf(referenceColor, rgbModel);
-      if (palette.length === 0) {
-         console.warn('Colors must first be added to the palette!');
-         return false;
-      }
-      const key = `${referenceColor.red},${referenceColor.green},${referenceColor.blue}`;
-      if (closestColors[key])
-         return closestColors[key];
-      let closestColor = {
-         blue: -1,
-         green: -1,
-         name: '',
-         red: -1,
-      };
-      let shortestDistance = Number.MAX_SAFE_INTEGER;
-      palette.forEach(paletteColor => {
-         if (shortestDistance === 0)
-            return;
-         const distance = Math.abs(paletteColor.red - referenceColor.red) + Math.abs(paletteColor.green - referenceColor.green) + Math.abs(paletteColor.blue - referenceColor.blue);
-         if (distance < shortestDistance) {
-            shortestDistance = distance;
-            closestColor = paletteColor;
-            closestColors[key] = paletteColor;
-         }
-      });
-      return closestColor;
-   };
-   
+
    const getCoordinates = (rgbObject = rgbModel) => {
       allow.anInstanceOf(rgbObject, rgbModel);
       const hsvObject = getHsvObjectFromRgbObject(rgbObject);
@@ -194,8 +179,8 @@ const Color = () => {
       positive: 1,
    };
    
-   const pixelate = (canvas = {}, blockSize = 0, matchToPalette = true, useHsvMatching = true) => {
-      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette).aBoolean(useHsvMatching);
+   const pixelate = (canvas = {}, blockSize = 0, matchToPalette = true) => {
+      allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette);
       const context = canvas.getContext('2d');
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const stats = {};
@@ -206,24 +191,13 @@ const Color = () => {
             const blockX = remainingX > blockSize ? blockSize : remainingX;
             const blockY = remainingY > blockSize ? blockSize : remainingY;
             const averageColor = calculateAverageColor(context.getImageData(x, y, blockX, blockY));
-            let color = {};
-            if (matchToPalette) {
-               if (useHsvMatching)
-                  color = getClosestColorInThePalette({
-                     blue: averageColor.blue,
-                     green: averageColor.green,
-                     red: averageColor.red,
-                     name: '',
-                  });
-               else
-                  color = getClosestRgbColorInThePalette({
-                     blue: averageColor.blue,
-                     green: averageColor.green,
-                     red: averageColor.red,
-                     name: '',
-                  });
-            } else
-               color = averageColor;
+            const referenceColor = {
+               blue: averageColor.blue,
+               green: averageColor.green,
+               red: averageColor.red,
+               name: '',
+            };
+            const color = matchToPalette ? getClosestColorInThePalette(referenceColor) : averageColor;
             if (color.name) {
                if (stats.hasOwnProperty(color.name))
                   stats[color.name]++;
@@ -249,6 +223,12 @@ const Color = () => {
       return palette;
    };
    
+   const setAlgorithm = (matchingAlgorithm = -1) => {
+      allow.oneOf(matchingAlgorithm, algorithm);
+      currentAlgorithm = matchingAlgorithm;
+      return currentAlgorithm;
+   };
+   
    const setImage = (newImage = '') => {
       allow.aString(newImage, is.not.empty);
       image = newImage;
@@ -264,7 +244,9 @@ const Color = () => {
    return {
       addColorsToPalette,
       addColorToPalette,
+      algorithm,
       baseHeavyBodyAcrylicPaints,
+      getAlgorithm,
       getClosestColorInThePalette,
       getCoordinates,
       getImage,
@@ -275,6 +257,7 @@ const Color = () => {
       pixelate,
       removeColorFromPalette,
       removeColorsFromPalette,
+      setAlgorithm,
       setImage,
       setLightInsensitivity,
    };
