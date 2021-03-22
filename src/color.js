@@ -9,9 +9,9 @@ const Color = () => {
    let lightInsensitivity = 100;
    const algorithm = {
       HSV_3D: 0,
-      HSV_SIMPLE: 1,
-      RGB_SIMPLE: 2,
-      RGB_SQUARED: 3,
+      RGB_SIMPLE: 1,
+      RGB_SQUARED: 2,
+      RGBPLUS_SIMPLE: 3,
    };
    let palette = [];
    const rgbModel = {
@@ -87,18 +87,22 @@ const Color = () => {
                const zDifferenceSquared = Math.pow((referenceCoordinates.z - paletteCoordinates.z), 2);
                distance = Math.sqrt(xDifferenceSquared + yDifferenceSquared + zDifferenceSquared);
                break;
-            case algorithm.HSV_SIMPLE:
-               const paletteHsv = getHsvObjectFromRgbObject(paletteColor);
-               const referenceHsv = getHsvObjectFromRgbObject(referenceColor);
-               distance = Math.pow((paletteHsv.hue - referenceHsv.hue), 2) + Math.pow((paletteHsv.saturation - referenceHsv.saturation), 2) + Math.pow((paletteHsv.value - referenceHsv.value), 2);
-               //distance = Math.abs(paletteHsv.hue - referenceHsv.hue) + Math.abs(paletteHsv.saturation - referenceHsv.saturation) + Math.abs(paletteHsv.value - referenceHsv.value);
+            case algorithm.RGBPLUS_SIMPLE:
+               distance = Math.abs(paletteColor.red - referenceColor.red)
+                  + Math.abs(paletteColor.green - referenceColor.green)
+                  + Math.abs(paletteColor.blue - referenceColor.blue)
+                  + Math.abs((paletteColor.red + paletteColor.green + paletteColor.blue) - (referenceColor.red + referenceColor.green + referenceColor.blue));
                break;
             case algorithm.RGB_SQUARED:
-               distance = Math.pow((paletteColor.red - referenceColor.red), 2) + Math.pow((paletteColor.green - referenceColor.green), 2) + Math.pow((paletteColor.blue - referenceColor.blue), 2);
+               distance = Math.pow((paletteColor.red - referenceColor.red), 2)
+                  + Math.pow((paletteColor.green - referenceColor.green), 2)
+                  + Math.pow((paletteColor.blue - referenceColor.blue), 2);
                break;
             case algorithm.RGB_SIMPLE:
             default:
-               distance = Math.abs(paletteColor.red - referenceColor.red) + Math.abs(paletteColor.green - referenceColor.green) + Math.abs(paletteColor.blue - referenceColor.blue);
+               distance = Math.abs(paletteColor.red - referenceColor.red)
+                  + Math.abs(paletteColor.green - referenceColor.green)
+                  + Math.abs(paletteColor.blue - referenceColor.blue);
                break;
          }
          if (distance < shortestDistance) {
@@ -109,7 +113,7 @@ const Color = () => {
       });
       return closestColor;
    };
-
+   
    const getCoordinates = (rgbObject = rgbModel) => {
       allow.anInstanceOf(rgbObject, rgbModel);
       const hsvObject = getHsvObjectFromRgbObject(rgbObject);
