@@ -201,8 +201,12 @@ const Color = () => {
       allow.anObject(canvas, is.not.empty).anInteger(blockSize, is.positive).aBoolean(matchToPalette);
       const context = canvas.getContext('2d');
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      const stats = {};
+      const stats = {
+         colors: {},
+         map: [],
+      };
       for (let y = 0; y < imageData.height; y += blockSize) {
+         const row = [];
          for (let x = 0; x < imageData.width; x += blockSize) {
             const remainingX = imageData.width - x;
             const remainingY = imageData.height - y;
@@ -216,15 +220,17 @@ const Color = () => {
                name: '',
             };
             const color = matchToPalette ? getClosestColorInThePalette(referenceColor) : averageColor;
+            row.push(color);
             if (color.name) {
-               if (stats.hasOwnProperty(color.name))
-                  stats[color.name]++;
+               if (stats.colors.hasOwnProperty(color.name))
+                  stats.colors[color.name]++;
                else
-                  stats[color.name] = 1;
+                  stats.colors[color.name] = 1;
             }
             context.fillStyle = `rgb(${color.red}, ${color.green}, ${color.blue})`;
             context.fillRect(x, y, blockX, blockY);
          }
+         stats.map.push(row);
       }
       return stats;
    };
