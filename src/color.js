@@ -9,8 +9,9 @@ const Color = () => {
    let lightInsensitivity = 100;
    const algorithm = {
       HSV_3D: 0,
-      RGB_SQUARED: 1,
+      HSV_SIMPLE: 1,
       RGB_SIMPLE: 2,
+      RGB_SQUARED: 3,
    };
    let palette = [];
    const rgbModel = {
@@ -85,6 +86,11 @@ const Color = () => {
                const yDifferenceSquared = Math.pow((referenceCoordinates.y - paletteCoordinates.y), 2);
                const zDifferenceSquared = Math.pow((referenceCoordinates.z - paletteCoordinates.z), 2);
                distance = Math.sqrt(xDifferenceSquared + yDifferenceSquared + zDifferenceSquared);
+               break;
+            case algorithm.HSV_SIMPLE:
+               const paletteHsv = getHsvObjectFromRgbObject(paletteColor);
+               const referenceHsv = getHsvObjectFromRgbObject(referenceColor);
+               distance = Math.abs(paletteHsv.hue - referenceHsv.hue) + Math.abs(paletteHsv.saturation - referenceHsv.saturation) + Math.abs(paletteHsv.value - referenceHsv.value);
                break;
             case algorithm.RGB_SQUARED:
                distance = Math.pow((paletteColor.red - referenceColor.red), 2) + Math.pow((paletteColor.green - referenceColor.green), 2) + Math.pow((paletteColor.blue - referenceColor.blue), 2);
