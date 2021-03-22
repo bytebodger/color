@@ -12,6 +12,7 @@ const Color = () => {
       RGB_SIMPLE: 1,
       RGB_SQUARED: 2,
       RGBPLUS_SIMPLE: 3,
+      RGBPLUS_SQUARED: 4,
    };
    let palette = [];
    const rgbModel = {
@@ -92,6 +93,12 @@ const Color = () => {
                   + Math.abs(paletteColor.green - referenceColor.green)
                   + Math.abs(paletteColor.blue - referenceColor.blue)
                   + Math.abs((paletteColor.red + paletteColor.green + paletteColor.blue) - (referenceColor.red + referenceColor.green + referenceColor.blue));
+               break;
+            case algorithm.RGBPLUS_SQUARED:
+               distance = Math.pow((paletteColor.red - referenceColor.red), 2)
+                  + Math.pow((paletteColor.green - referenceColor.green), 2)
+                  + Math.pow((paletteColor.blue - referenceColor.blue), 2)
+                  + Math.pow(((paletteColor.red + paletteColor.green + paletteColor.blue) - (referenceColor.red + referenceColor.green + referenceColor.blue)), 2);
                break;
             case algorithm.RGB_SQUARED:
                distance = Math.pow((paletteColor.red - referenceColor.red), 2)
