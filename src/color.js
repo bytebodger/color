@@ -4,8 +4,14 @@ import { baseHeavyBodyAcrylicPaints, halfWhiteHeavyBodyAcrylicPaints } from './h
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let closestColors = {};
+   let currentMatchType;
    let image = null;
    let lightInsensitivity = 100;
+   const matchType = {
+      HSV_3D: 0,
+      RMS_RGB: 1,
+      SIMPLE_RGB: 2,
+   };
    let palette = [];
    const rgbModel = {
       blue: 0,
