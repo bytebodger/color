@@ -4,7 +4,7 @@ import { baseHeavyBodyAcrylicPaints, halfWhiteHeavyBodyAcrylicPaints } from './h
 const Color = () => {
    allow.setFailureBehavior(allow.failureBehavior.WARN);
    let closestColors = {};
-   let currentAlgorithm = 0;
+   let currentAlgorithm = 2;
    let image = null;
    let lightInsensitivity = 100;
    const algorithm = {
